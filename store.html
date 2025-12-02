@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>L I K H A — Store Profile</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; width: 100%; scroll-behavior: smooth; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #000;
+      color: #fff;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .background-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -3;
+      animation: zoomIn 25s ease-in-out infinite alternate;
+    }
+    @keyframes zoomIn {
+      from { transform: scale(1); }
+      to { transform: scale(1.08); }
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.02) 0%,
+        rgba(0,0,0,0.18) 35%,
+        rgba(0,0,0,0.45) 65%,
+        rgba(0,0,0,0.85) 100%
+      );
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 48px;
+      background: rgba(0,0,0,0.25);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      transition: background 0.3s ease, padding 0.3s ease;
+    }
+    header.scrolled {
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(14px);
+      padding: 14px 36px;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      color: #fff;
+      text-shadow: 0 4px 22px rgba(0,0,0,0.6);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .btn-back {
+      background: #ffd3b6;
+      color: #2b2b2b;
+      font-weight: 800;
+      padding: 12px 26px;
+      border-radius: 30px;
+      text-decoration: none;
+      transition: transform 0.22s ease, background 0.22s ease;
+      box-shadow: 0 8px 34px rgba(0,0,0,0.28);
+    }
+    .btn-back:hover { transform: translateY(-3px); background: #ffbfa0; }
+
+    .profile-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 140px 20px 100px;
+      animation: fadeInUp 1.2s ease both;
+    }
+
+    .profile-content {
+      max-width: 800px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 30px;
+      padding: 40px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+
+    .profile-content img {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 22px;
+      box-shadow: 0 0 30px rgba(255,211,182,0.35);
+    }
+
+    .profile-content h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 6vw, 52px);
+      margin-bottom: 10px;
+    }
+
+    .profile-content p {
+      font-size: 18px;
+      opacity: 0.9;
+      margin-bottom: 26px;
+      line-height: 1.6;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .social-links a {
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease, transform 0.2s ease;
+      text-decoration: none;
+      color: #ffd3b6;
+      font-size: 20px;
+    }
+
+    .social-links a:hover {
+      background: rgba(255,211,182,0.3);
+      transform: translateY(-3px);
+    }
+
+    footer {
+      background: rgba(0,0,0,0.9);
+      color: #fff;
+      text-align: center;
+      padding: 36px;
+      font-size: 14px;
+      z-index: 6;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .profile-content { padding: 28px; }
+    }
+  </style>
+</head>
+
+<body>
+  <video autoplay muted loop playsinline class="background-video">
+    <source src="yarn.mp4" type="video/mp4" />
+  </video>
+  <div class="overlay"></div>
+
+  <header id="mainHeader">
+    <a href="#" class="logo">L I K H A</a>
+    <a href="index.html" class="btn-back">Back to Home</a>
+  </header>
+
+  <section class="profile-section">
+    <div class="profile-content">
+      <img src="logo.jpg" alt="Store Logo" />
+      <h1>L I K H A Crochet Studio</h1>
+      <p>Welcome to <strong>L I K H A</strong> — where artistry meets craftsmanship.  
+        Each piece is handmade with love, inspired by the warmth of tradition and the beauty of modern design.  
+        From cozy wearables to timeless home accents, every crochet creation tells a story of patience and passion.</p>
+
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook-f">f</i></a>
+        <a href="#"><i class="fab fa-instagram">i</i></a>
+        <a href="#"><i class="fab fa-twitter">x</i></a>
+      </div>
+    </div>
+  </section>
+
+  <footer><p>© 2025 L I K H A. Crafted with love.</p></footer>
+
+  <script>
+    // Header fade effect when scrolling
+    const header = document.getElementById('mainHeader');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 90) header.classList.add('scrolled');
+      else header.classList.remove('scrolled');
+    });
+  </script>
+</body>
+</html>

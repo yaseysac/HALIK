@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crochets - L I K H A</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: #000;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* BACKGROUND VIDEO */
+.background-video {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: -3;
+  animation: zoomIn 25s ease-in-out infinite alternate;
+}
+@keyframes zoomIn {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+
+/* DARK OVERLAY */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: -2;
+}
+
+/* HEADER */
+header {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 48px;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  z-index: 1000;
+}
+header a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+}
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  letter-spacing: 6px;
+}
+
+/* TITLE */
+h1 {
+  font-family: 'Playfair Display', serif;
+  color: #ffd3b6;
+  text-align: center;
+  margin-top: 150px;
+  font-size: clamp(36px, 6vw, 70px);
+}
+
+/* PRODUCT GRID */
+.gallery {
+  padding: 60px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+/* PRODUCT CARD */
+.product-card {
+  background: rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 14px;
+  backdrop-filter: blur(6px);
+  transition: 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+}
+
+/* IMAGE */
+.product-card img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: 0.3s ease;
+}
+
+/* HOVER EFFECT — LIFT + ZOOM */
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.7);
+}
+.product-card:hover img {
+  transform: scale(1.05);
+}
+
+/* PRODUCT NAME & PRICE */
+.product-info {
+  margin-top: 12px;
+}
+.product-name {
+  font-size: 18px;
+  font-weight: 600;
+}
+.product-price {
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+/* BUTTONS */
+.buttons {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.buttons button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 700;
+  backdrop-filter: blur(2px);
+}
+
+.buttons button.checkout {
+  background: rgba(255,211,182,0.12);
+}
+
+.buttons button:hover {
+  opacity: 0.85;
+}
+
+/* small cart badge in header */
+.cart-badge {
+  background: #ffd3b6;
+  color: #000;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 8px;
+  font-weight:800;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 40px 20px;
+  background: rgba(0,0,0,0.9);
+  font-size: 14px;
+  color: #ddd;
+}
+
+/* AUTH (LOGIN / SIGNUP) CENTER POPUP (USERNAME + PASSWORD) */
+#authOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
+#authModal {
+  background: #0e0e0e;
+  width: 360px;
+  max-width: calc(100% - 40px);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.04);
+  color: #fff;
+}
+#authModal h3 { margin-bottom:8px; color:#ffd3b6; font-family: 'Playfair Display'; }
+#authModal input { width:100%; padding:10px; margin:8px 0; border-radius:8px; border:none; background: rgba(255,255,255,0.04); color:#fff; }
+#authModal .btn { width:100%; padding:10px; border-radius:8px; border:none; font-weight:800; cursor:pointer; background:#ffd3b6; color:#000; }
+
+/* small toast */
+.toast {
+  position: fixed; right: 18px; bottom: 18px;
+  background: rgba(0,0,0,0.8); color:#fff; padding:10px 14px; border-radius:8px; display:none; z-index:2500;
+}
+
+/* responsive */
+@media (max-width:720px){
+  header { padding:12px 18px; }
+  h1 { margin-top:110px; }
+}
+  </style>
+</head>
+
+<body>
+
+<script>
+// Save last visited shopping page
+(function () {
+  const pageName = location.pathname.split("/").pop();
+  localStorage.setItem("likha_last_page", pageName);
+})();
+</script>
+
+  <video autoplay muted loop playsinline class="background-video">
+    <source src="yarn.mp4" type="video/mp4" />
+  </video>
+  <div class="overlay"></div>
+
+  <header>
+    <a href="index.html">← Back</a>
+    <div style="margin-left:auto; margin-right:24px;">
+      <a href="cart.html" style="color:#fff; text-decoration:none;">Cart <span id="cartCountBadge" class="cart-badge">0</span></a>
+    </div>
+  </header>
+
+  <h1>Fuzzy Collections</h1>
+
+  <div class="gallery">
+
+    <!-- CROCHET PRODUCTS — Converted to FIRST CODE style -->
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Keychains/FB_IMG_1762781978514.jpg" alt="Fuzzy Keychain 1">
+      <div class="product-info"><p class="product-name">Fuzzy Keychain 1</p><p class="product-price">₱120</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="keychain-1" data-name="Fuzzy Keychain 1" data-price="120" data-img="Crochets/Keychain/1.jpeg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Keychains/FB_IMG_1762781981323.jpg" alt="Fuzzy Keychain 2">
+      <div class="product-info"><p class="product-name">Fuzzy Keychain 2</p><p class="product-price">₱90</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="keychain-2" data-name="Fuzzy Keychain 2" data-price="90" data-img="Crochets/Keychain/2.jpeg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Keychains/FB_IMG_1762781986150.jpg" alt="Fuzzy Keychain 3">
+      <div class="product-info"><p class="product-name">Fuzzy Keychain 3</p><p class="product-price">₱100</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="keychain-3" data-name="Fuzzy Keychain 3" data-price="100" data-img="Crochets/Keychain/3.jpeg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Keychains/FB_IMG_1762781988396.jpg" alt="Fuzzy Keychain 4">
+      <div class="product-info"><p class="product-name">Fuzzy Keychain 4</p><p class="product-price">₱130</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="keychain-4" data-name="Fuzzy Keychain 4" data-price="130" data-img="Crochets/Keychain/4.jpeg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Keychains/FB_IMG_1762781999522.jpg" alt="Fuzzy Keychain 5">
+      <div class="product-info"><p class="product-name">Fuzzy Keychain 5</p><p class="product-price">₱110</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="keychain-5" data-name="Fuzzy Keychain 5" data-price="110" data-img="Crochets/Keychain/5.jpeg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Keychains/Red.jpg" alt="Fuzzy Keychain Red">
+      <div class="product-info"><p class="product-name">Fuzzy Keychain Red</p><p class="product-price">₱95</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="keychain-6" data-name="Fuzzy Keychain Red" data-price="95" data-img="Crochets/Keychain/6.jpeg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Keychains/Yellow.jpg" alt="Fuzzy Keychain Yellow">
+      <div class="product-info"><p class="product-name">Fuzzy Keychain Yellow</p><p class="product-price">₱100</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="keychain-7" data-name="Fuzzy Keychain Yellow" data-price="100" data-img="Crochets/Keychain/7.jpeg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <!-- FLOWERS -->
+    <div class="product-card">
+      <img src="Fuzzy Wire/Flower/1.jpg" alt="Fuzzy Flower 1">
+      <div class="product-info"><p class="product-name">Fuzzy Flower 1</p><p class="product-price">₱120</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="keychain-8" data-name="Fuzzy Flower 1" data-price="120" data-img="Crochets/Keychain/8.jpeg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Flower/3.jpg" alt="Fuzzy Flower 2">
+      <div class="product-info"><p class="product-name">Fuzzy Flower 2</p><p class="product-price">₱140</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="keychain-9" data-name="Fuzzy Flower 2" data-price="140" data-img="Crochets/Keychain/9.jpeg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Flower/5.jpg" alt="Fuzzy Flower 3">
+      <div class="product-info"><p class="product-name">Fuzzy Flower 3</p><p class="product-price">₱180</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="flower-1" data-name="Fuzzy Flower 3" data-price="180" data-img="Crochets/Flower/1.png">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Flower/6.jpg" alt="Fuzzy Flower 4">
+      <div class="product-info"><p class="product-name">Fuzzy Flower 4</p><p class="product-price">₱170</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="flower-2" data-name="Fuzzy Flower 4" data-price="170" data-img="Crochets/Flower/2.png">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Flower/7.jpg" alt="Fuzzy Flower 5">
+      <div class="product-info"><p class="product-name">Fuzzy Flower 5</p><p class="product-price">₱200</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="flower-3" data-name="Fuzzy Flower 5" data-price="200" data-img="Crochets/Flower/3.png">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Flower/10.jpg" alt="Fuzzy Flower 6t">
+      <div class="product-info"><p class="product-name">Fuzzy Flower 6</p><p class="product-price">₱350</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="flower-5" data-name="Fuzzy Flower 6" data-price="350" data-img="Crochets/Flower/5.jpg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Flower/11.jpg" alt="Fuzzy Flower 7">
+      <div class="product-info"><p class="product-name">Fuzzy Flower 7</p><p class="product-price">₱160</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="flower-6" data-name="Fuzzy Flower 7" data-price="160" data-img="Crochets/Flower/6.jpeg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Flower/12.jpg" alt="Fuzzy Flower 8">
+      <div class="product-info"><p class="product-name">Fuzzy Flower 8</p><p class="product-price">₱180</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="flower-7" data-name="Fuzzy Flower 8" data-price="180" data-img="Crochets/Flower/7.jpeg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Flower/14.jpg" alt="Fuzzy Flower 9t">
+      <div class="product-info"><p class="product-name">Fuzzy Flower 9</p><p class="product-price">₱320</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="flower-8" data-name="Fuzzy Flower 9" data-price="320" data-img="Crochets/Flower/8.jpeg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Flower/16.jpg" alt="Fuzzy Flower 10">
+      <div class="product-info"><p class="product-name">Fuzzy Flower 10</p><p class="product-price">₱300</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="flower-9" data-name="Fuzzy Flower 10" data-price="300" data-img="Crochets/Flower/9.jpeg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Flower/17.jpg" alt="Fuzzy Flower 11">
+      <div class="product-info"><p class="product-name">Fuzzy Flower 11</p><p class="product-price">₱450</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="flower-10" data-name="Fuzzy Flower 11" data-price="450" data-img="Crochets/Flower/10.jpg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Fuzzy Wire/Flower/18.jpg" alt="Mini Bloom">
+      <div class="product-info"><p class="product-name">Fuzzy Flower 12</p><p class="product-price">₱150</p></div>
+      <div class="buttons">
+        <button class="add-to-cart" data-id="flower-11" data-name="Fuzzy Flower 12" data-price="150" data-img="Crochets/Flower/11.jpeg">Add to Cart</button>
+        <button class="checkout">Checkout</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>© 2025 L I K H A. All Rights Reserved.</footer>
+
+  <!-- AUTH (LOGIN / SIGNUP) CENTER POPUP (USERNAME + PASSWORD) -->
+  <div id="authOverlay" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
+    <div id="authModal">
+      <h3 id="authTitle">Login</h3>
+
+      <div id="authLogin">
+        <input id="authUser" type="text" placeholder="Username">
+        <input id="authPass" type="password" placeholder="Password">
+        <button id="authSubmit" class="btn">Login</button>
+        <p style="margin-top:10px; color:#ccc;">No account? <a href="#" id="switchToSignup" style="color:#ffd3b6;">Create one</a></p>
+      </div>
+
+      <div id="authSignup" style="display:none;">
+        <input id="signupUser" type="text" placeholder="Choose a username">
+        <input id="signupPass" type="password" placeholder="Choose a password">
+        <button id="signupSubmit" class="btn">Create account</button>
+        <p style="margin-top:10px; color:#ccc;">Have an account? <a href="#" id="switchToLogin" style="color:#ffd3b6;">Login</a></p>
+      </div>
+
+      <div style="text-align:right; margin-top:8px;">
+        <button id="authClose" style="background:transparent; border:none; color:#bbb; cursor:pointer;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+
+const USERS_KEY = 'likha_users';   // object: { username: password }
+const USER_KEY = 'likha_user';     // current logged-in username
+const CART_KEY = 'likha_cart';     // array of cart items {id, name, price, img, qty}
+const cartCountBadge = document.getElementById('cartCountBadge'); // badge in this page
+
+// Auth modal elements on this page
+const authOverlay = document.getElementById('authOverlay');
+const authTitle = document.getElementById('authTitle');
+const authLogin = document.getElementById('authLogin');
+const authSignup = document.getElementById('authSignup');
+const authSubmit = document.getElementById('authSubmit');
+const authClose = document.getElementById('authClose');
+const switchToSignup = document.getElementById('switchToSignup');
+const switchToLogin = document.getElementById('switchToLogin');
+const signupSubmit = document.getElementById('signupSubmit');
+
+let pendingItem = null; // item waiting to be added after login (local)
+let pendingCheckout = false;
+let toastTimer = null;
+
+/* small toast */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.style.display = 'none', 1600);
+}
+
+/* Cart helpers */
+function getCart() {
+  try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function saveCart(cart) {
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  updateCartBadge();
+}
+function updateCartBadge() {
+  const cart = getCart();
+  const total = cart.reduce((s,i)=> s + (i.qty||1), 0);
+  if (cartCountBadge) cartCountBadge.textContent = total;
+}
+
+/* Open auth modal (mode = 'login' or 'signup') */
+function openAuth(mode='login') {
+  authOverlay.style.display = 'flex';
+  authOverlay.setAttribute('aria-hidden','false');
+  authMode = mode;
+  if (mode === 'login') {
+    authTitle.textContent = 'Login';
+    authLogin.style.display = 'block';
+    authSignup.style.display = 'none';
+    (document.getElementById('authUser') || {}).value = '';
+    (document.getElementById('authPass') || {}).value = '';
+  } else {
+    authTitle.textContent = 'Create account';
+    authLogin.style.display = 'none';
+    authSignup.style.display = 'block';
+    (document.getElementById('signupUser') || {}).value = '';
+    (document.getElementById('signupPass') || {}).value = '';
+  }
+}
+function closeAuth() {
+  authOverlay.style.display = 'none';
+  authOverlay.setAttribute('aria-hidden','true');
+}
+
+/* Switch links inside modal */
+switchToSignup && switchToSignup.addEventListener('click', (e)=> { e.preventDefault(); openAuth('signup'); });
+switchToLogin && switchToLogin.addEventListener('click', (e)=> { e.preventDefault(); openAuth('login'); });
+
+/* Signup flow */
+signupSubmit && signupSubmit.addEventListener('click', ()=> {
+  const username = (document.getElementById('signupUser') || {}).value || '';
+  const pass = (document.getElementById('signupPass') || {}).value || '';
+  if (!username || !pass) { alert('Please fill all fields'); return; }
+
+  let users = {};
+  try { users = JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); } catch(e){ users = {}; }
+  if (users[username]) { alert('Username already exists'); return; }
+
+  users[username] = pass;
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  localStorage.setItem(USER_KEY, username);
+  updateAuthUI();
+  closeAuth();
+  showToast('Account created & logged in');
+
+  // If there is a persistent pending item set by other pages prefer that (handled on load),
+  // otherwise add local pending item if present
+  if (localStorage.getItem('likha_pending_item')) {
+    // tryConsumePending() will handle it on load / redirect scenarios
+  } else if (pendingItem) {
+    queueAddPending();
+  }
+  if (pendingCheckout) { pendingCheckout=false; window.location.href = 'cart.html'; }
+});
+
+/* Login flow */
+authSubmit && authSubmit.addEventListener('click', ()=> {
+  const username = (document.getElementById('authUser') || {}).value || '';
+  const pass = (document.getElementById('authPass') || {}).value || '';
+  if (!username || !pass) { alert('Please enter username and password'); return; }
+
+  let users = {};
+  try { users = JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); } catch(e){ users = {}; }
+  if (!users[username] || users[username] !== pass) {
+    alert('Invalid username or password.');
+    return;
+  }
+  localStorage.setItem(USER_KEY, username);
+  updateAuthUI();
+  closeAuth();
+  showToast('Logged in');
+
+  // If another page set likha_pending_item, let tryConsumePending handle it on load,
+  // else handle local pending item
+  if (localStorage.getItem('likha_pending_item')) {
+    // handled below in tryConsumePending if needed
+  } else if (pendingItem) {
+    queueAddPending();
+  }
+  if (pendingCheckout) { pendingCheckout=false; window.location.href = 'cart.html'; }
+});
+
+authClose && authClose.addEventListener('click', closeAuth);
+
+/* updateAuthUI - on this page there's no nav login button, but keep behavior synchronized */
+function updateAuthUI() {
+  const user = localStorage.getItem(USER_KEY);
+  // No visible account link on this page; function kept for parity with index.
+  // We still keep it so other pages/scripts can call it.
+}
+
+/* Add-to-cart API (shared) */
+function addToCartFromProduct(item) {
+  const user = localStorage.getItem(USER_KEY);
+  if (!user) {
+    // Keep a local pending item so after login here it will be added
+    pendingItem = item;
+    openAuth('login');
+    return;
+  }
+  const cart = getCart();
+  const found = cart.find(i => i.id === item.id);
+  if (found) { found.qty = (found.qty || 1) + (item.qty || 1); }
+  else { cart.push(Object.assign({ qty: item.qty || 1 }, item)); }
+  saveCart(cart);
+  showToast('Added to cart');
+}
+
+/* queued add after login (for local modal flow) */
+function queueAddPending() {
+  if (!pendingItem) return;
+  addToCartFromProduct(pendingItem);
+  pendingItem = null;
+}
+
+/* Wire .add-to-cart buttons */
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest && e.target.closest('.add-to-cart');
+  if (!btn) return;
+  e.preventDefault();
+  const id = btn.getAttribute('data-id') || ('p_' + Date.now());
+  const name = btn.getAttribute('data-name') || btn.dataset.name || 'Item';
+  const price = Number(btn.getAttribute('data-price') || btn.dataset.price || 0);
+  const img = btn.getAttribute('data-img') || btn.dataset.img || '';
+  addToCartFromProduct({ id, name, price, img, qty: 1 });
+});
+
+/* Checkout buttons behavior */
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest && e.target.closest('.checkout');
+  if (!btn) return;
+  e.preventDefault();
+  const user = localStorage.getItem(USER_KEY);
+  if (!user) {
+    // Set persistent flag so if user logs in on a different page it's honored
+    localStorage.setItem('likha_pending_checkout', '1');
+    // Also set local pendingCheckout so local modal redirects correctly after logging in here
+    pendingCheckout = true;
+    openAuth('login');
+    return;
+  }
+  window.location.href = 'cart.html';
+});
+
+/* On load: consume any pending item placed by other pages (index or other) */
+(function tryConsumePending() {
+  try {
+    // If another page (index.html) redirected here and set likha_pending_item / likha_force_auth
+    const pendingFromOther = localStorage.getItem('likha_pending_item');
+    const force = localStorage.getItem('likha_force_auth');
+
+    // If there's a pending item AND the user is already logged in, add it
+    if (pendingFromOther && localStorage.getItem(USER_KEY)) {
+      const item = JSON.parse(pendingFromOther);
+      const cart = getCart();
+      const found = cart.find(i => i.id === item.id);
+      if (found) found.qty = (found.qty || 1) + (item.qty || 1);
+      else cart.push(item);
+      saveCart(cart);
+      localStorage.removeItem('likha_pending_item');
+
+      if (localStorage.getItem('likha_pending_checkout') === '1') {
+        localStorage.removeItem('likha_pending_checkout');
+        window.location.href = 'cart.html';
+        return;
+      } else {
+        showToast('Added pending item to cart');
+      }
+    }
+
+    // If a force-auth flag was set by another page and user is not logged in, open the local modal
+    if (force && !localStorage.getItem(USER_KEY)) {
+      // open the local modal to prompt login immediately
+      openAuth(force || 'login');
+    }
+
+    // Clean up the force flag (we've handled it)
+    localStorage.removeItem('likha_force_auth');
+
+    // If a checkout flag exists and user is logged in, redirect to cart
+    if (localStorage.getItem('likha_pending_checkout') === '1' && localStorage.getItem(USER_KEY)) {
+      localStorage.removeItem('likha_pending_checkout');
+      window.location.href = 'cart.html';
+      return;
+    }
+  } catch(e) { /* ignore errors */ }
+})();
+
+/* Initialize UI */
+updateCartBadge();
+updateAuthUI();
+
+/* Accessibility: close auth on ESC */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeAuth();
+});
+</script>
+
+</body>
+</html>

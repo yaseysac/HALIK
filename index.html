@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>L I K H A</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+:root {
+  --carousel-width: 100%;
+  --carousel-height: 310px;
+  --accent: #ffd3b6;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: #000;
+  color: #fff;
+  overflow-x: hidden;
+}
+.background-video {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: -3;
+  animation: zoomIn 25s ease-in-out infinite alternate;
+}
+@keyframes zoomIn { from { transform: scale(1); } to { transform: scale(1.08); } }
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: rgba(0,0,0,0.3);
+  transition: background 0.8s ease;
+}
+.overlay.solid { background: rgba(10,10,10,0.9); }
+
+header {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 48px;
+  z-index: 1000;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.3s ease, padding 0.3s ease;
+}
+header.scrolled {
+  background: rgba(0,0,0,0.6);
+  padding: 14px 36px;
+}
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: #fff;
+  text-decoration: none;
+}
+nav ul { display: flex; gap: 28px; list-style: none; align-items:center; }
+nav a { color: #fff; text-decoration: none; font-weight: 600; padding:6px 8px; }
+nav a:hover { color: var(--accent); }
+
+/* Dropdown Category (in header) */
+.dropdown {
+  position: relative;
+}
+.dropdown > a { cursor: pointer; }
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 36px;
+  background: rgba(0,0,0,0.85);
+  border-radius: 10px;
+  padding: 8px 0;
+  min-width: 160px;
+  z-index: 1100;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+.dropdown-content a {
+  display: block;
+  padding: 10px 16px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+.dropdown-content a:hover { background: rgba(255,255,255,0.04); color: var(--accent); }
+.dropdown:hover .dropdown-content { display: block; }
+
+.hero {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(40px, 6vw, 80px);
+  margin-bottom: 16px;
+}
+.hero p {
+  font-size: clamp(16px, 2vw, 22px);
+  margin-bottom: 24px;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+  padding: 14px 36px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 800;
+}
+.btn-primary:hover { background: #ffbfa0; }
+
+section.products {
+  padding: 120px 60px 80px;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+.carousel-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--accent);
+  text-align: center;
+}
+.carousel-title a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.carousel-title a:hover { color: #ffbfa0; }
+
+.slideshow-container {
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto 40px;
+  width: var(--carousel-width);
+  height: var(--carousel-height);
+  border-radius: 18px;
+  background: rgba(255,255,255,0.05);
+}
+.slideshow-track {
+  display: flex;
+  transition: transform 1s ease;
+  height: 100%;
+  gap: 12px;
+}
+.slide {
+  flex: 0 0 25%;
+  height: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+}
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+  transition: transform .3s ease, filter .3s ease;
+}
+.slide img:hover { transform: scale(1.05); filter: brightness(0.9); }
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.45);
+  border: none;
+  color: #fff;
+  font-size: clamp(20px, 2vw, 30px);
+  padding: 10px 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+}
+.arrow.left { left: 10px; }
+.arrow.right { right: 10px; }
+.arrow:hover { background: rgba(0,0,0,0.7); }
+
+/* add-to-cart overlay for slides */
+.slide .slide-controls {
+  position: absolute;
+  left: 0; right: 0; bottom: 10px;
+  display:flex; justify-content:center; gap:8px;
+  pointer-events: none;
+}
+.slide .slide-controls button {
+  pointer-events: auto;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight:800;
+  cursor:pointer;
+  opacity: .95;
+}
+
+/* --- About Section --- */
+section.about {
+  padding: 100px 60px;
+  background: rgba(255,255,255,0.03);
+  text-align: center;
+}
+.about h2 {
+  font-family: 'Playfair Display', serif;
+  color: var(--accent);
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+.about p {
+  max-width: 800px;
+  margin: 0 auto;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #ddd;
+}
+
+/* --- Contact Section --- */
+section.contact {
+  padding: 100px 60px;
+  background: rgba(255,255,255,0.05);
+  text-align: center;
+}
+.contact h2 {
+  font-family: 'Playfair Display', serif;
+  color: var(--accent);
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+.contact p {
+  font-size: 18px;
+  color: #ddd;
+  margin-bottom: 20px;
+}
+.contact form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.contact input, .contact textarea {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-size: 16px;
+}
+.contact button {
+  background: var(--accent);
+  border: none;
+  color: #000;
+  padding: 12px 28px;
+  font-weight: 700;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.contact button:hover { background: #ffbfa0; }
+
+/* Header small controls */
+.nav-right { display:flex; gap:12px; align-items:center; }
+
+/* Cart badge */
+.cart-badge {
+  background: var(--accent);
+  color: #000;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+/* --- Login modal (center) --- */
+#authOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
+#authModal {
+  background: #0e0e0e;
+  width: 360px;
+  max-width: calc(100% - 40px);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.04);
+  color: #fff;
+}
+#authModal h3 { margin-bottom:8px; color:var(--accent); font-family: 'Playfair Display'; }
+#authModal input { width:100%; padding:10px; margin:8px 0; border-radius:8px; border:none; background: rgba(255,255,255,0.04); color:#fff; }
+#authModal .btn { width:100%; padding:10px; border-radius:8px; border:none; font-weight:800; cursor:pointer; background:var(--accent); color:#000; }
+
+/* small toast */
+.toast {
+  position: fixed; right: 18px; bottom: 18px;
+  background: rgba(0,0,0,0.8); color:#fff; padding:10px 14px; border-radius:8px; display:none; z-index:2500;
+}
+
+/* responsive */
+@media (max-width:720px){
+  nav ul { gap:10px; flex-wrap:wrap; }
+  header { padding:12px 18px; }
+  .hero { height: auto; padding-top:64px; min-height:60vh; }
+}
+  </style>
+</head>
+<body>
+
+<script>
+// Save last visited shopping page
+(function () {
+  const pageName = location.pathname.split("/").pop();
+  localStorage.setItem("likha_last_page", pageName);
+})();
+</script>
+
+<!-- your page content starts here -->
+
+
+  <video autoplay muted loop playsinline class="background-video">
+    <source src="yarn.mp4" type="video/mp4" />
+  </video>
+
+  <div class="overlay" id="bgOverlay"></div>
+
+  <header id="mainHeader">
+    <a href="store.html" class="logo">L I K H A</a>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#products">Shop</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Category ▾</a>
+          <div class="dropdown-content" role="menu" aria-label="Category menu">
+            <a href="flowers.html" id="navFlowers">Flowers</a>
+            <a href="keychains.html" id="navKeychains">Keychains</a>
+          </div>
+        </li>
+
+
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+
+        <!-- LOGIN BUTTON (between Contact and Cart) -->
+        <li><a href="#" id="navLoginBtn">Login</a></li>
+
+        <!-- CART ICON (far right) -->
+        <li>
+          <a href="cart.html" id="cartLink" title="View cart">
+            🛒 <span id="cartCount" class="cart-badge">0</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <section id="top" class="hero">
+    <div>
+      <h1>Handcrafted Crochet Wonders</h1>
+      <p>Discover unique, handmade crochet pieces made with love and passion.</p>
+      <a href="#products" class="btn-primary">Shop Now</a>
+    </div>
+  </section>
+
+  <section id="products" class="products">
+    <h2 class="carousel-title"><a href="Crochets.html">Crochets</a></h2>
+    <div class="slideshow-container">
+      <button class="arrow left" id="prev1">❮</button>
+      <div class="slideshow-track" id="track1">
+        <div class="slide">
+          <img src="Crochets/Flower/3.png" alt="Crochet Flower 3">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Crochets/Flower/5.jpg" alt="Crochet Flower 5">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Crochets/Flower/11.jpeg" alt="Crochet Flower 11">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Crochets/Keychain/1.jpeg" alt="Keychain 1">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Crochets/Keychain/2.jpeg" alt="Keychain 2">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Crochets/Keychain/3.jpeg" alt="Keychain 3">
+          <div class="slide-controls">
+          </div>
+        </div>
+      </div>
+      <button class="arrow right" id="next1">❯</button>
+    </div>
+
+    <h2 class="carousel-title"><a href="fuzzys.html">Fuzzy Wire</a></h2>
+    <div class="slideshow-container">
+      <button class="arrow left" id="prev2">❮</button>
+      <div class="slideshow-track" id="track2">
+        <div class="slide">
+          <img src="Fuzzy Wire/Flower/2.jpg" alt="Fuzzy 2">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Fuzzy Wire/Flower/8.jpg" alt="Fuzzy 8">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Fuzzy Wire/Flower/13.jpg" alt="Fuzzy 13">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Fuzzy Wire/Keychains/Red.jpg" alt="Fuzzy Red">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Fuzzy Wire/Keychains/White.jpg" alt="Fuzzy White">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Fuzzy Wire/Keychains/Yellow.jpg" alt="Fuzzy Yellow">
+          <div class="slide-controls">
+          </div>
+        </div>
+      </div>
+      <button class="arrow right" id="next2">❯</button>
+    </div>
+    <h2 class="carousel-title"><a href="Satins.html">Satin Flowers</a></h2>
+    <div class="slideshow-container">
+      <button class="arrow left" id="prev3">❮</button>
+      <div class="slideshow-track" id="track3">
+        <div class="slide">
+          <img src="Satin/Flower/Blue.webp" alt="Satin Blue">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Satin/Flower/Gold.jpg" alt="Satin Gold">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Satin/Flower/Pink.jpg" alt="Satin Pink">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Satin/Flower/Red.webp" alt="Satin Red">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Satin/Flower/Ribbon.jpg" alt="Satin Ribbon">
+          <div class="slide-controls">
+          </div>
+        </div>
+        <div class="slide">
+          <img src="Satin/Flower/White.jpg" alt="Satin White">
+          <div class="slide-controls">
+          </div>
+        </div>
+      </div>
+      <button class="arrow right" id="next3">❯</button>
+    </div>
+  </section>
+
+  <section id="about" class="about">
+    <h2>About L I K H A</h2>
+    <p>At LIKHA, we create handmade crochet pieces and delicate crafts that bring warmth, creativity, and love into your home. Each product is crafted with patience and artistry — reflecting the Filipino spirit of care and craftsmanship.</p>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2>Contact Us</h2>
+    <p>We’d love to hear from you! Send us your questions, orders, or custom crochet requests below.</p>
+    <form id="contactForm">
+      <input type="text" placeholder="Your Name" required>
+      <input type="email" placeholder="Your Email" required>
+      <textarea rows="4" placeholder="Your Message" required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
+
+  <footer>© 2025 L I K H A. All Rights Reserved.</footer>
+
+  <!-- AUTH (LOGIN / SIGNUP) CENTER POPUP (USERNAME + PASSWORD) -->
+  <div id="authOverlay" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
+    <div id="authModal">
+      <h3 id="authTitle">Login</h3>
+
+      <div id="authLogin">
+        <input id="authUser" type="text" placeholder="Username">
+        <input id="authPass" type="password" placeholder="Password">
+        <button id="authSubmit" class="btn">Login</button>
+        <p style="margin-top:10px; color:#ccc;">No account? <a href="#" id="switchToSignup" style="color:var(--accent);">Create one</a></p>
+      </div>
+
+      <div id="authSignup" style="display:none;">
+        <input id="signupUser" type="text" placeholder="Choose a username">
+        <input id="signupPass" type="password" placeholder="Choose a password">
+        <button id="signupSubmit" class="btn">Create account</button>
+        <p style="margin-top:10px; color:#ccc;">Have an account? <a href="#" id="switchToLogin" style="color:var(--accent);">Login</a></p>
+      </div>
+
+      <div style="text-align:right; margin-top:8px;">
+        <button id="authClose" style="background:transparent; border:none; color:#bbb; cursor:pointer;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ---------- Existing header/carousel/contact scripts (kept intact) ---------- */
+const overlay = document.getElementById('bgOverlay');
+const header = document.getElementById('mainHeader');
+window.addEventListener('scroll', () => {
+  overlay.classList.toggle('solid', window.scrollY > 300);
+  header.classList.toggle('scrolled', window.scrollY > 100);
+});
+
+function setupCarousel(trackId, prevId, nextId) {
+  const track = document.getElementById(trackId);
+  const prev = document.getElementById(prevId);
+  const next = document.getElementById(nextId);
+  if (!track || !prev || !next) return;
+  let slides = Array.from(track.children);
+  const slideCount = slides.length;
+  const slideWidthPercent = 25;
+  let index = 1;
+
+  const firstClone = slides[0].cloneNode(true);
+  const lastClone = slides[slideCount - 1].cloneNode(true);
+  track.appendChild(firstClone);
+  track.insertBefore(lastClone, slides[0]);
+  slides = Array.from(track.children);
+  track.style.transform = `translateX(-${index * slideWidthPercent}%)`;
+
+  function update(animate = true) {
+    track.style.transition = animate ? 'transform 1s ease' : 'none';
+    track.style.transform = `translateX(-${index * slideWidthPercent}%)`;
+  }
+
+  function nextSlide() { if (index >= slides.length - 1) return; index++; update(); }
+  function prevSlide() { if (index <= 0) return; index--; update(); }
+
+  track.addEventListener('transitionend', () => {
+    if (slides[index].isEqualNode(firstClone)) { index = 1; update(false); }
+    if (slides[index].isEqualNode(lastClone)) { index = slides.length - 2; update(false); }
+  });
+
+  next.addEventListener('click', nextSlide);
+  prev.addEventListener('click', prevSlide);
+}
+
+setupCarousel('track1', 'prev1', 'next1');
+setupCarousel('track2', 'prev2', 'next2');
+setupCarousel('track3', 'prev3', 'next3');
+
+/* Smooth Scroll for anchor links */
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    // allow normal nav clicks that are full links (not hashes)
+    const href = this.getAttribute('href');
+    if (!href || href === '#') return;
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+});
+
+/* Contact Form */
+document.getElementById('contactForm').addEventListener('submit', e => {
+  e.preventDefault();
+  alert('Thank you for your message! We will get back to you soon.');
+  e.target.reset();
+});
+
+/* ---------- NEW: cart + auth system (localStorage) ---------- */
+const USERS_KEY = 'likha_users';   // object: { username: password }
+const USER_KEY = 'likha_user';     // current logged-in username
+const CART_KEY = 'likha_cart';     // array of cart items {id, name, price, img, qty}
+const cartCountEl = document.getElementById('cartCount');
+const navLoginBtn = document.getElementById('navLoginBtn');
+const authOverlay = document.getElementById('authOverlay');
+const authTitle = document.getElementById('authTitle');
+const authLogin = document.getElementById('authLogin');
+const authSignup = document.getElementById('authSignup');
+const authSubmit = document.getElementById('authSubmit');
+const authClose = document.getElementById('authClose');
+const switchToSignup = document.getElementById('switchToSignup');
+const switchToLogin = document.getElementById('switchToLogin');
+const signupSubmit = document.getElementById('signupSubmit');
+
+let pendingItem = null; // item waiting to be added after login
+let pendingCheckout = false;
+let toastTimer = null;
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.style.display = 'none', 1600);
+}
+
+function getCart() {
+  try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function saveCart(cart) {
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  updateCartCount();
+}
+function updateCartCount() {
+  const cart = getCart();
+  const total = cart.reduce((s,i)=> s + (i.qty||1), 0);
+  if (cartCountEl) cartCountEl.textContent = total;
+}
+
+/* Open auth modal (mode = 'login' or 'signup') */
+function openAuth(mode='login') {
+  authOverlay.style.display = 'flex';
+  authOverlay.setAttribute('aria-hidden','false');
+  authMode = mode;
+  if (mode === 'login') {
+    authTitle.textContent = 'Login';
+    authLogin.style.display = 'block';
+    authSignup.style.display = 'none';
+    // prefill login fields if helpful
+    (document.getElementById('authUser') || {}).value = '';
+    (document.getElementById('authPass') || {}).value = '';
+  } else {
+    authTitle.textContent = 'Create account';
+    authLogin.style.display = 'none';
+    authSignup.style.display = 'block';
+    (document.getElementById('signupUser') || {}).value = '';
+    (document.getElementById('signupPass') || {}).value = '';
+  }
+}
+function closeAuth() {
+  authOverlay.style.display = 'none';
+  authOverlay.setAttribute('aria-hidden','true');
+}
+
+/* Attach nav login button */
+navLoginBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  openAuth('login');
+});
+
+/* Switch links */
+switchToSignup && switchToSignup.addEventListener('click', (e)=> { e.preventDefault(); openAuth('signup'); });
+switchToLogin && switchToLogin.addEventListener('click', (e)=> { e.preventDefault(); openAuth('login'); });
+
+/* Signup flow (username + password stored in likha_users) */
+signupSubmit && signupSubmit.addEventListener('click', ()=> {
+  const username = (document.getElementById('signupUser') || {}).value || '';
+  const pass = (document.getElementById('signupPass') || {}).value || '';
+  if (!username || !pass) { alert('Please fill all fields'); return; }
+
+  let users = {};
+  try { users = JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); } catch(e){ users = {}; }
+  if (users[username]) { alert('Username already exists'); return; }
+
+  users[username] = pass;
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  localStorage.setItem(USER_KEY, username);
+  updateAuthUI();
+  closeAuth();
+  showToast('Account created & logged in');
+  if (pendingItem) { queueAddPending(); }
+  if (pendingCheckout) { pendingCheckout=false; window.location.href = 'cart.html'; }
+});
+
+/* Login flow (check username + password) */
+authSubmit && authSubmit.addEventListener('click', ()=> {
+  const username = (document.getElementById('authUser') || {}).value || '';
+  const pass = (document.getElementById('authPass') || {}).value || '';
+  if (!username || !pass) { alert('Please enter username and password'); return; }
+
+  let users = {};
+  try { users = JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); } catch(e){ users = {}; }
+  if (!users[username] || users[username] !== pass) {
+    alert('Invalid username or password.');
+    return;
+  }
+  localStorage.setItem(USER_KEY, username);
+  updateAuthUI();
+  closeAuth();
+  showToast('Logged in');
+
+  if (pendingItem) { queueAddPending(); }
+  if (pendingCheckout) { pendingCheckout=false; window.location.href = 'cart.html'; }
+});
+
+authClose && authClose.addEventListener('click', closeAuth);
+
+/* update nav login text and behavior */
+function updateAuthUI() {
+  const user = localStorage.getItem(USER_KEY);
+  if (user) {
+    navLoginBtn.textContent = 'Account';
+    navLoginBtn.onclick = (e) => {
+      e.preventDefault();
+      const action = confirm('Logged in as ' + user + '. Log out?');
+      if (action) {
+        localStorage.removeItem(USER_KEY);
+        updateAuthUI();
+        showToast('Logged out');
+      }
+    };
+  } else {
+    navLoginBtn.textContent = 'Login';
+    navLoginBtn.onclick = (e)=> { e.preventDefault(); openAuth('login'); };
+  }
+}
+
+/* Add-to-cart API (shared) */
+function addToCartFromProduct(item) {
+  const user = localStorage.getItem(USER_KEY);
+  if (!user) {
+    pendingItem = item;
+    openAuth('login');
+    return;
+  }
+  const cart = getCart();
+  const found = cart.find(i => i.id === item.id);
+  if (found) { found.qty = (found.qty || 1) + (item.qty || 1); }
+  else { cart.push(Object.assign({ qty: item.qty || 1 }, item)); }
+  saveCart(cart);
+  showToast('Added to cart');
+}
+
+/* queued add after login */
+function queueAddPending() {
+  if (!pendingItem) return;
+  addToCartFromProduct(pendingItem);
+  pendingItem = null;
+}
+
+/* Auto-wire .add-to-cart buttons if they exist */
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest && e.target.closest('.add-to-cart');
+  if (!btn) return;
+  e.preventDefault();
+  const id = btn.getAttribute('data-id') || ('p_' + Date.now());
+  const name = btn.getAttribute('data-name') || btn.dataset.name || 'Item';
+  const price = Number(btn.getAttribute('data-price') || btn.dataset.price || 0);
+  const img = btn.getAttribute('data-img') || btn.dataset.img || '';
+  addToCartFromProduct({ id, name, price, img, qty: 1 });
+});
+
+/* Checkout button handling (if you have #checkoutBtn somewhere on page) */
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest && e.target.closest('.checkout');
+  if (!btn) return;
+  e.preventDefault();
+  const user = localStorage.getItem(USER_KEY);
+  if (!user) {
+    pendingCheckout = true;
+    openAuth('login');
+    return;
+  }
+  // user is logged in -> go to cart page
+  window.location.href = 'cart.html';
+});
+
+/* Initialize cart count and auth UI */
+updateCartCount();
+updateAuthUI();
+
+/* small accessibility: close auth on ESC */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeAuth();
+});
+
+/* nice function for other scripts/pages to call */
+function getCartCount() { return getCart().reduce((s,i)=> s + (i.qty||1), 0); }
+
+/* show cart count on load */
+updateCartCount();
+</script>
+
+
+
+</body>
+</html>
